@@ -1,0 +1,36 @@
+\name{weight.function}
+\alias{weight.function}
+
+\title{ weight functions }
+\description{
+ This function produces weight functions to reweight found audit
+  miscounts.
+}
+\usage{
+weight.function(name = c("no.weight", "weight",
+             "weight.and.slop", "margin.weight",
+             "taint"))
+}
+
+\arguments{
+  \item{name}{ name of function desired }
+}
+\details{
+ The functions are      no weighting,          weighted by size of precint,
+          weight by size, after a slop of 2 votes has been taken off,
+  and weighing for pairwise margin tests, and finally, the taint weight
+  function that takes maximum error in precincts and gives a ratio of
+  actual error to maximum error.
+
+}
+\value{
+  A two-element list of two functions, the second being the inverse of
+  the first.  All the functions have three parameters, x, b\_m, and M,
+  which are the things to
+  weight, the bound on votes (or maximum error in precincts), and the
+  (smallest) margin.
+}
+
+\author{ Luke W. Miratrix }
+
+

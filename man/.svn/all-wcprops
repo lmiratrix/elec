@@ -1,0 +1,215 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/elecR/!svn/ver/2/trunk/elec/man
+END
+KM.audit.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/elecR/!svn/ver/2/trunk/elec/man/KM.audit.Rd
+END
+simulateIt.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/elecR/!svn/ver/2/trunk/elec/man/simulateIt.Rd
+END
+elec.data.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/elecR/!svn/ver/2/trunk/elec/man/elec.data.Rd
+END
+make.truth.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/elecR/!svn/ver/2/trunk/elec/man/make.truth.Rd
+END
+CAST.calc.opt.cut.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/elecR/!svn/ver/2/trunk/elec/man/CAST.calc.opt.cut.Rd
+END
+santa.cruz.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/elecR/!svn/ver/2/trunk/elec/man/santa.cruz.Rd
+END
+MaximumBounds.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/elecR/!svn/ver/2/trunk/elec/man/MaximumBounds.Rd
+END
+audit.plan.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/elecR/!svn/ver/2/trunk/elec/man/audit.plan.Rd
+END
+truth.looker.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/elecR/!svn/ver/2/trunk/elec/man/truth.looker.Rd
+END
+sim.race.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/elecR/!svn/ver/2/trunk/elec/man/sim.race.Rd
+END
+stark.test.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/elecR/!svn/ver/2/trunk/elec/man/stark.test.Rd
+END
+marin.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/elecR/!svn/ver/2/trunk/elec/man/marin.Rd
+END
+find.stark.SRS.p.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/elecR/!svn/ver/2/trunk/elec/man/find.stark.SRS.p.Rd
+END
+countVotes.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/elecR/!svn/ver/2/trunk/elec/man/countVotes.Rd
+END
+weight.function.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/elecR/!svn/ver/2/trunk/elec/man/weight.function.Rd
+END
+audit.totals.to.OS.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/elecR/!svn/ver/2/trunk/elec/man/audit.totals.to.OS.Rd
+END
+tri.sample.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/elecR/!svn/ver/2/trunk/elec/man/tri.sample.Rd
+END
+find.q.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/elecR/!svn/ver/2/trunk/elec/man/find.q.Rd
+END
+tri.calc.sample.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/elecR/!svn/ver/2/trunk/elec/man/tri.calc.sample.Rd
+END
+yolo.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/elecR/!svn/ver/2/trunk/elec/man/yolo.Rd
+END
+make.audit.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/elecR/!svn/ver/2/trunk/elec/man/make.audit.Rd
+END
+KM.calc.sample.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/elecR/!svn/ver/3/trunk/elec/man/KM.calc.sample.Rd
+END
+make.opt.packed.bad.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/elecR/!svn/ver/2/trunk/elec/man/make.opt.packed.bad.Rd
+END
+CAST.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/elecR/!svn/ver/2/trunk/elec/man/CAST.Rd
+END
+tri.audit.sim.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/elecR/!svn/ver/2/trunk/elec/man/tri.audit.sim.Rd
+END
+opt.sample.size.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/elecR/!svn/ver/2/trunk/elec/man/opt.sample.size.Rd
+END
+make.sample.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/elecR/!svn/ver/2/trunk/elec/man/make.sample.Rd
+END
+santa.cruz.audit.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/elecR/!svn/ver/2/trunk/elec/man/santa.cruz.audit.Rd
+END
+elec-package.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/elecR/!svn/ver/2/trunk/elec/man/elec-package.Rd
+END
+compute.stark.t.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/elecR/!svn/ver/2/trunk/elec/man/compute.stark.t.Rd
+END
+make.random.truth.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/elecR/!svn/ver/2/trunk/elec/man/make.random.truth.Rd
+END
+find.stratification.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/elecR/!svn/ver/2/trunk/elec/man/find.stratification.Rd
+END
+AuditErrors.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/elecR/!svn/ver/2/trunk/elec/man/AuditErrors.Rd
+END
+trinomial.bound.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/elecR/!svn/ver/2/trunk/elec/man/trinomial.bound.Rd
+END
+do.audit.Rd
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/elecR/!svn/ver/2/trunk/elec/man/do.audit.Rd
+END

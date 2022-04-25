@@ -1,0 +1,12 @@
+# Export all names
+exportPattern(".")
+
+S3method(print, audit.plan)
+S3method(print, audit.plan.KM)
+S3method(print, audit.plan.tri)
+S3method(print, elec.data)
+
+importFrom("graphics", "abline", "axis", "contour", "points",
+           "segments", "text")
+importFrom("stats", "pbinom", "phyper", "runif", "uniroot")
+importFrom("utils", "head")
