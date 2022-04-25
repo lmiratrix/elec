@@ -44,7 +44,7 @@ do.audit( Z, truth, audit.names )
 
 }
 \seealso{
-\link{CAST} for how to run the CAST auditing method.  See
+\link{CAST.audit} for how to run the CAST auditing method.  See
 \code{\link{make.sample}} and \code{\link{make.truth}} for generating fake
 situations for doing simulation studies of the CAST method.  See
 \link{AuditErrors} and \code{\link{audit.totals.to.OS}} for utility

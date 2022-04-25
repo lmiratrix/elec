@@ -2,7 +2,6 @@
 % Please edit documentation in R/trinomial.R
 \name{trinomial.bound}
 \alias{trinomial.bound}
-\alias{trinomial.audit}
 \title{Auditing with the Trinomial Bound: trinomial.bound and trinomial.audit}
 \usage{
 trinomial.bound(
@@ -64,16 +63,9 @@ for finding the p-value for the trinomial bound test.}
 gives greater accuracy in the resulting p-values and bounds.}
 
 \item{\dots}{Extra arguments passed to the plot command.}
-
-\item{Z}{An elec.data object that is the race being audited.}
-
-\item{audit}{A data.frame with a column for each candidate and a row for
-each audited precinct, holding the audit totals for each candidate. An
-additional column, \code{count}, holds the number of times that precinct was
-sampled (since sampling was done by replacement).}
 }
 \value{
-List with charactaristics of the audit and the final results.
+List with characteristics of the audit and the final results.
 \item{n}{ Size of sample.} \item{k}{Number of non-zero taints.}
 \item{d}{Threshold for what a small taint is.} \item{e.max}{The worst-case
 taint.} \item{max}{ The upper confidence bound for the passed alpha-level.}
@@ -82,51 +74,43 @@ the worst case.} \item{p.value}{ The p.value for the test, if a specific
 worst-case bound 1/U was passed via p.value.bound.}
 }
 \description{
-\code{trinomial.audit} converts the audited total counts for candidates to
-overstatements and taints. \code{trinomial.bound} calculates the trinomial
-bound given the size of an audit sample, the number of non-zero errors, and
-the size of the small-error threshold. It can also plot a contour of the
-distribution space, bounds, and alpha lines.
+This method makes a contour plot of the optimization problem.
 }
 \details{
-Right now the p-value is computed in a clumsy, bad way.  A grid of points
-over (0, xlim) X (0, ylim) is generated corresponding to values of p0 and
-pd, and for each point the mean of that distribution and the chance of
-generating an outcome as extreme as k is calculated.  Then the set of points
-with an outcome close to alpha is extrated, and the corresponding bound is
-optimized over this subset.  Not the best way to do things.
+Note: alphas are multiplied by 100 to get in percents.
 }
 \examples{
 
 
-## Auditing Santa Cruz
-data(santa.cruz.audit)
+# The reported poll data: make an elec.data object for processing
 data(santa.cruz)
 Z = elec.data(santa.cruz, C.names=c("leopold","danner"))
-res = trinomial.audit( Z, santa.cruz.audit )
-res
+Z
+
+# Make a plan
 plan = tri.calc.sample( Z, beta=0.75, guess.N = 10, p_d = 0.05,
                swing=10, power=0.9, bound="e.plus" )
 
-## Compute the bound.  Everything is scaled by 100 (i.e. to percents) for easier numbers. 
+# Conduct the audit
+data(santa.cruz.audit)
+res = trinomial.audit( Z, santa.cruz.audit )
+res
+
+# Compute the bound.  Everything is scaled by 100 (i.e. to percents) for easier numbers. 
 trinomial.bound(n=res$n, k = res$k, d=100*plan$d, e.max=100, p.value.bound=100/plan$T,
            xlim=c(0.75,1), ylim=c(0.0,0.25),
            alpha.lvls=c(25), asp=1,
            main="Auditing Santa Cruz with Trinomial Bound" )
 
-
 }
 \references{
 See Luke W. Miratrix and Philip B. Stark.  (2009) Election
-Audits using a Trinomial Bound.  http://www.stat.berkeley.edu/\~stark
+Audits using a Trinomial Bound.  https://www.stat.berkeley.edu/~stark/Vote/index.htm
 }
 \seealso{
 See \code{\link{elec.data}} for information on the object that holds vote
 counts.  See \code{\link{tri.sample}} for drawing the actual sample.  See
 \code{\link{tri.calc.sample}} for figuring out how many samples to draw.
 See \code{\link{tri.audit.sim}} for simulating audits using this method.
-See \link{CAST} for an SRS audit method.
-}
-\author{
-Luke W. Miratrix
+See \link{CAST.audit} for an SRS audit method.
 }

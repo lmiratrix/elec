@@ -26,10 +26,6 @@
 #' @param err.override Assume a baserate of this amount of error everywhere,
 #' ignoring audit data. If non-null, use this as the found error in votes
 #' rather than the actual errors found in the audit.
-#' @param bound.col This is the vector (in audit) containing the maximum number
-#' of votes possible in the various precincts.
-#' @param calc.e_p Calculate e\_p or take as given.
-#' @param w_p The weight function to use to reweight the errors of precincts.
 #' @param audit The audit object, if it is not in the Z object, or if some
 #' other object other than the one in the Z object is desired to be considered
 #' as the audit object.  Used by the simulation functions to generate errors
@@ -95,249 +91,26 @@ weight.function = function( name=c("no.weight","weight","weight.and.slop", "marg
 
 
 
-
-#' core election audit data structure
-#' 
-#' Makes an object (often called a `Z' object in this documentation) that holds
-#' all the vote totals, etc., as well as some precomputed information such as
-#' vote margins between candidates, the theoretical winners, and so on.
-#' 
-#' \code{elec.data} does some cleaning and renaming of the passed data
-#' structure.  In particular it will rename the tot.votes column to "tot.votes"
-#' if it is not that name already.
-#' 
-#' \code{make.Z} just passes all arguments to \code{elec.data()}---it is the
-#' same thing.  It is the original name of elec.data and is included for legacy
-#' and nostalgia reasons.
-#' 
-#' 
-#' @aliases make.Z elec.data is.elec.data print.elec.data
-#' @param V Voter matrix OR 2-element list with Voter Matrix followed by
-#' Candidate names
-#' @param C.names List of candidate names.  Also names of columns in V
-#' @param f Number of winners
-#' @param audit The audit data---must have columns that match C.names.  Columns
-#' are overstatements of votes found for those candidates.
-#' @param pool Combine small candidates into single pseudo-candidates to
-#' increase power
-#' @param tot.votes.col Name of column that has the total votes for the
-#' precincts.
-#' @param PID.col Name of column that identifies unique PIDs for precincts.
-#' @param ...  The collection of arguments that are passed directly to
-#' elec.data, or (in the case of print), unused.
-#' @param x For print() and is.elec.data(). An elec.data object
-#' @param n For print(). number of sample precincts to print
-#' @return
-#' 
-#' A ``elec.data'' data structure.  Note: Will add PID (precinct ID) column if
-#' no PID provided (and generate unique PIDs).  It will rename the PID column
-#' to PID.  Also, rownames are always PIDs (so indexing by PID works).
-#' @author Luke W. Miratrix
-#' @seealso See \link{CAST} for the CAST method.  See
-#' \code{\link{tri.calc.sample}}, \code{\link{tri.sample}}, and
-#' \code{\link{audit.plan.tri}} for the trinomial bound method.  See
-#' \code{\link{countVotes}} for counting the votes listed in Z.
-#' @examples
-#' 
-#' data(santa.cruz)
-#' elec.data( santa.cruz, C.names=c("danner","leopold") )
-#' 
-#' @export elec.data
-elec.data = function( V, C.names=names(V)[2:length(V)], f = 1, 
-  audit=NULL, pool=TRUE, tot.votes.col="tot.votes", PID.col="PID" ) {
-  ## Make the 'Z' matrix that holds all the vote totals, etc., as well as some
-  ## precomputed information such as vote margins between candidates, the theoretical
-  ## winners, and so on.
-  ##
-  ## make.Z does some cleaning and renaming of the passed data structure.  In particular
-  ## it will rename the tot.votes column to "tot.votes" if it is not that name already.
-  ##
-  ## Param    V: Voter matrix OR 2-element list with Voter Matrix followed 
-  ##             by Candidate names
-  ##       pool: Combine small candidates into single pseudo-candidates to increase 
-  ##             power
-  ##
-  ## Return:  A "elec.data" data structure. 
-  ##         Note: Will _add_ PID (precinct ID) column (and generate PIDs)
-  ##               if no PID provided.  Also, rownames
-  ##               are always PIDs (so indexing by PID works)
-
-
-
-
-  Z = list()
-  class( Z ) = "elec.data"
-  
-  if ( length(V) == 2 ) {
-    C.names = V[[2]]
-    V = V[[1]]
-  }
-  
-  Z$N = length(V[[1]])     # number of precincts
-  Z$C = length(C.names)    # number of candidates
-  Z$f = f                  # number of possible winners
-
-  Z$V = V
-  Z$C.names = C.names
-
-  ##	Z$alpha = 0.10
-  ##	Z$a_s = rep(0.5,10)^(1:10)
-
-  stopifnot( all( Z$C.names %in% names(Z$V) ) )
-  
-  if ( is.numeric(tot.votes.col) ) {
-  	tot.votes.col = names(V)[[tot.votes.col]]
-  }
-  if ( is.na(l <- match( tot.votes.col, names(V) ) ) ) {
-    warning( "No tot.votes.col found in vote matrix--will be recounting" )
-  } else {
-  	names(Z$V)[l] = "tot.votes"
-  }
-  Z$tot.votes.col = "tot.votes"
-
-  Z = countVotes(Z)
-
-  if( !is.null( audit ) ) {
-    stopifnot( all( Z$C.names %in% names(audit) ) )
-    Z$audit = audit
-  }
-
-  ## Pooling!
-  ln = length(Z$losers)
-  if ( pool && 
-      ln > 2 && ( (Z$totals[Z$losers[ln]] + Z$totals[Z$losers[ln-1]]) < Z$totals[Z$losers[1]] )) {
-    
-    grb = ln - 1
-    while( grb > 1 &&  sum( Z$totals[Z$losers[grb:ln]] ) < Z$totals[Z$losers[1]] ) {
-      grb = grb - 1
-    }
-    grb = grb + 1
-    to.pool = Z$losers[grb:ln]
-    
-    Z$V[["pool"]] = apply(Z$V[to.pool],1,sum)
-    Z$V = Z$V[setdiff(names(Z$V),to.pool)]
-    if ( !is.null( audit )) {  # pool the audit info too.
-      Z$audit[["pool"]] = apply(Z$audit[to.pool],1,sum)
-      Z$audit = Z$audit[setdiff(names(Z$audit),to.pool)]
-    }
-    Z$C.names = c( setdiff(Z$C.names, to.pool ), "pool" )
-    
-    Z$C = length(Z$C.names)    # number of candidates
-    Z = countVotes(Z)
-    ln = ln - 1
-
-  }
-  
-  
-  if ( is.numeric(PID.col) ) {
-  	names(Z$V)[PID.col] = "PID"
-  } else if ( is.na(l <- match( PID.col, names(V) ) ) ) {
-    warning( "No PID.col found in vote matrix--will be generated" )
-  } else {
-  	names(Z$V)[l] = "PID"
-  }
-  Z$PID.col = "PID"
-
-  if ( is.null( Z$V$PID ) ) {
-    PID = paste( "P", rownames(V), sep="-" )
-    names(PID) = "PID"
-    Z$V = cbind( PID, Z$V )
-  }	
-  Z$V$PID = as.character(Z$V$PID)
-  stopifnot( sum(duplicated(Z$V$PID)) == 0 )
-  rownames(Z$V) = Z$V$PID
-  
-  Z
-}
-
-                                        # this is what make.Z should be called.  Should fix.
-make.Z = function( ... ) {
-  elec.data( ... )
-}
-
-
-
-#' Check if object is elec.data object
-#' 
-#' @return is.elec.data: TRUE if object is an elec.data object.
+#' @title Election Audit Error Bound Functions
 #'
-#' @export
+#' @description This is one of the various bounding functions used to
+#' bound the maximum amount of error one could see in a single audit
+#' unit.
 #'
-#' @rdname is.elec.data
-#' 
-is.elec.data = function( x ) {
-	inherits(x, "elec.data")
-}
-
-
-#' @title Pretty print elec.data object
+#' maximumMarginBound returns the maximum margin reduction for each
+#' precint by computing all margin reductions between pairs of winners
+#' & losers and then scaling by that pair's total margin to get a
+#' proportion and then taking the max of all such proportions (usually
+#' will be the last winner to the closest loser).
 #'
-#' @param n Number to print
-#'   
-#' @return print: No return value; prints results.  
-#'   
-#' @rdname elec.data
-#' 
-#' @export
-#' 
-print.elec.data = function( x, n=4, ... ) {
-                                        # "N"           "C"           "f"           "V"           "C.names"     "total.votes" "margin"      "margin.per"  "totals"      "winners"     "losers"      "audit"       "Ms"         
-  Z = x
-  cat( "Z frame:  N = ", Z$N, "\tC/f = ", Z$C, "/", Z$f, "\ttotal votes = ", 
-      Z$total.votes, "    M = ", Z$margin,
-      " (", round(100*Z$margin.per), "%)\n",
-      "\t\tNames = ", paste(Z$C.names, " (", round(100*Z$totals/Z$total.votes), "%)", sep="", collapse=", "), "\t  Winners = ", 
-      paste( Z$winners, collapse=", " ), "    Losers = ", 
-      paste( Z$losers, collapse=", "), "\n", sep="")
-  if ( Z$C > 2 ) { 
-    cat( "Pairwise margins:\n" )
-    print( Z$Ms )
-  }
-  
-  cat( "Sample votes (", length( rownames(Z$V) ), " records)\n", sep="" )
-  print( head( Z$V, n ) , fill=TRUE, labels=c("\t"))
-  if ( !is.null(Z$audit ) ) {
-    cat( "Sample Audits (", length( rownames(Z$audit) ), " records)\n", sep="" )
-    print(	head( Z$audit, n ) )
-    
-                                        #fill=TRUE, labels=c("\t")
-  } else {
-    cat( "(No audit information)\n" )
-  }
-  
-  invisible( Z )
-
-}
-
-
-
-
-
-
-
-#' @title
-#' Election Audit Error Bound Functions
-#' 
-#' @description
-#' Various bounding functions used to bound the maximum amount of error one
-#' could see in a single audit unit.
-#' 
-#' maximumMarginBound return the maximum margin reduction for each precint by
-#' computing all margin reductions between pairs of winners & losers and then
-#' scaling by that pair's total margin to get a proportion and then taking the
-#' max of all such proportions (usually will be the last winner to the closest
-#' loser).
-#' 
-#' 
+#'
 #' @param Z The elec.data object.
-#' @param votes The data.frame to compute the maximumMarginBounds for.  If
-#' null, will return all bounds for all precincts in Z.
-#' @param frac Fraction of total votes that could be a winner
-#' overstatement/loser understatement.  So if the worst-case is a 20\% flip
-#' then enter 0.4
-#' @return Vector (of length of precincts) of maximum possible error for each
-#' precinct.
+#' @param votes The data.frame to compute the maximumMarginBounds for.
+#'   If null, will return all bounds for all precincts in Z.
+#' @return Vector (of length of precincts) of maximum possible error
+#'   for each precinct.
 #' @author Luke W. Miratrix
+#' @export
 maximumMarginBound = function( Z, votes=NULL ) {
 ## return the maximum margin reduction for each precint by computing
 ## all margin reductions between pairs of winners & losers and then
@@ -387,7 +160,12 @@ maximumMarginBound = function( Z, votes=NULL ) {
 #' percentage of the total votes cast in the unit.  Typically the 20\% WPM is
 #' used--meaning a swing of 40\% is the largest error possible as 20\% of the
 #' votes go from the winner to the loser.
+#' 
+#' @param frac Fraction of total votes that could be a winner
+#'   overstatement/loser understatement.  So if the worst-case is a
+#'   20\% flip then enter 0.4
 #'  
+#' @seealso maximumMarginBound
 #' @inheritParams maximumMarginBound
 #' @export
 fractionOfVotesBound = function( Z, frac=0.4 ) {
@@ -427,7 +205,7 @@ countVotes = function( Z ) {
   
   
     computeMargins = function( Z ) {
-    ## Used by make.Z
+    ## Used by elec.data
     ##
     ## Return: the pairwise margins (as # of votes) as a data.frame with the rows being
     ## the winners and the columns being the losers.
@@ -560,17 +338,27 @@ calc.pairwise.e_p = function( Z, audit=NULL, err.override=NULL ) {
 
 #' Calculate the measured error in each of the audited precicnts.
 #'
+#' @param Z Elec.data object holding the originally reported results
+#' @param audit A data.frame with one column per candidate that holds
+#'   the totals from the audit.  Each row corresponds to a precinct.
+#'   Object needs a PID column with precinct ids that match the ones
+#'   in Z.
 #' @param bound.col This is the vector (in audit) containing the
 #'   maximum number of votes (or error) possible in the various
 #'   precincts.
-#' @param err.override:  If non-null, use this as the found error in
+#' @param err.override  If non-null, use this as the found error in
 #'   votes rather than the actual errors found in the audit.
+#' @param bound.col This is the vector (in audit) containing the
+#'   maximum number of votes possible in the various precincts.
+#' @param calc.e_p Calculate e\_p or take as given.
+#' @param w_p The weight function to use to reweight the errors of
+#'   precincts.
 #'
 #' @return    Orig audit table from Z with two new columns, err and
 #'   err.weighted, corresponding to the errors found in each audited
 #'   precinct before and after the weight function has been applied to
 #'   them.
-#' @export  
+#' @export
 compute.audit.errors = function( Z, audit=NULL,
   calc.e_p=calc.pairwise.e_p,
   w_p = weight.function("no.weight"),
@@ -780,7 +568,10 @@ find.stark.SRS.p = function( N, n, q ) {
 }
 
 
-
+#' Workhorse driver for stark.test
+#' 
+#' @rdname stark.test
+#' @export
 stark.test.Z = function( Z, 
   calc.e_p=calc.pairwise.e_p,
   w_p = weight.function("no.weight"),
@@ -907,6 +698,8 @@ stark.test.Z = function( Z,
 
 
 
+# @aliases stark.test stark.test.Z stark.pairwise.test
+
 #' Conduct old-style test of election data
 #' 
 #' These main methods conduct the test of the election audit and returns a
@@ -921,7 +714,6 @@ stark.test.Z = function( Z,
 #' The Z object, in particular has: Z\$V: The table of reported votes Z\$audit:
 #' The table of audits as differences from recorded votes
 #' 
-#' @aliases stark.test stark.test.Z stark.pairwise.test
 #' @param votes data.frame of votes. Each row is precinct.
 #' @param audits data.frame of audits. Each row is precinct.  Table reports
 #' overstatement by candidate.
@@ -932,6 +724,7 @@ stark.test.Z = function( Z,
 #' to increase power
 #' @param pairwise if TRUE then do a pairwise test for all pairs and return
 #' highest p-value
+#' 
 #' @param Z The object holding all the voting information.  See below for
 #' details.
 #' @param calc.e_p The Function used to calculate maximum error bounds
@@ -953,8 +746,10 @@ stark.test.Z = function( Z,
 #' those values are already known (e.g., for a simulation)
 #' @param drop Either a vector of TRUE/FALSE or a name of a column in Z\$V of
 #' T/F values.  Precincts identified by drop will be dropped from calculations.
+#' 
 #' @param \dots Extra arguments passed directly to the work-horse method
 #' stark.test.Z
+#' 
 #' @return Return an htest object with pvalue, some relevant statistics, and
 #' the Z object used (possibly constructed) that produced those results.
 #' @author Luke W. Miratrix
@@ -963,7 +758,7 @@ stark.test.Z = function( Z,
 #' components of this test.  \code{\link{find.stark.SRS.p}} is a utility
 #' function for computing a p-value for a specific situation.  See
 #' \link{weight.function} for functions used to weight audit errors.  See
-#' \link{MaximumBounds} for different bounds on error that one might use for
+#' MaximumBound for a bound on error that one might use for
 #' these tests.  See \code{\link{find.stratification}} for a utility for
 #' stratification.
 #' @examples
@@ -997,7 +792,7 @@ stark.test = function( votes, audits, C.names=NULL, f=1, pool=TRUE, pairwise=FAL
   if ( pairwise ) {
     stark.pairwise.test( votes, audits, C.names=C.names, f=f, pool=pool, ... )
   } else {
-    Z = make.Z(votes, C.names, f, audit=audits, pool=pool )
+    Z = elec.data(votes, C.names, f, audit=audits, pool=pool )
 
     T = stark.test.Z( Z, ... )
     
@@ -1057,7 +852,7 @@ stark.pairwise.test = function( votes, audits, C.names=NULL, f=1, pool=TRUE, ...
   ## param     C.names:  if NULL will derive from cols 2 on of votes
   ## param   strat.col:  if NULL will not stratify
   
-  all.Z= make.Z(votes, C.names, f, audit=audits, pool=pool )
+  all.Z= elec.data(votes, C.names, f, audit=audits, pool=pool )
   
   max.pv = -1
   best.T = NULL
@@ -1065,7 +860,7 @@ stark.pairwise.test = function( votes, audits, C.names=NULL, f=1, pool=TRUE, ...
   for ( w in all.Z$winners ) {
     for ( l in all.Z$losers ) {
       ##cat( "Examining ", w, " beating ", l, "\n" )
-      Z = make.Z( all.Z$V, C.names=c(w, l), 1, audit=all.Z$audit, pool=FALSE )
+      Z = elec.data( all.Z$V, C.names=c(w, l), 1, audit=all.Z$audit, pool=FALSE )
       T = stark.test.Z( Z, ... )
       ##print(T)
       if ( T$p.value > max.pv ) {

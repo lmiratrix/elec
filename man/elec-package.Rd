@@ -21,8 +21,8 @@ There are three general audit styles implemented in this package.  For each
 style there are two main computational tasks provided: estimate the needed
 sample size and expected workload, and calculate $P$-values for a given
 audit result.  The three methods are CAST (see
-\code{\link{CAST.calc.sample}} and \code{\link{CAST}}), the Trinomial Bound
-(see \code{\link{tri.calc.sample}} or \code{\link{trinomial.bound}}) , and
+\code{\link{CAST.calc.sample}} and \code{\link{CAST.audit}}, the Trinomial Bound
+(see \code{\link{tri.calc.sample}} and \code{\link{trinomial.audit}}), and the
 Kaplan-Markov (KM) Bound (see \code{\link{KM.calc.sample}} and
 \code{\link{KM.audit}}).
 

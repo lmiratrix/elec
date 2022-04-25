@@ -38,6 +38,7 @@ NULL
 #' @return is.audit.plan: TRUE if object is an audit.plan object.
 #'
 #' @export
+#' @param x Object to check
 #'
 #' @rdname audit.plan
 #' 
@@ -49,6 +50,7 @@ is.audit.plan = function( x ) {
 
 #' @title Pretty print audit plan
 #'
+#' @param audit.plan to print.
 #' @param ... No extra options passed.
 #'   
 #' @return print: No return value; prints results.  
@@ -90,10 +92,38 @@ print.audit.plan = function( x, ... ) {
 #' @return is.audit.plan.tri: TRUE if object is an audit.plan.tri object.
 #'
 #' @export
+#' @param x object to check
 #'
 #' @rdname audit.plan
 #' 
 is.audit.plan.tri = function( x ) {
     inherits( x, "audit.plan.tri" )
 }
+
+
+
+#' @title Pretty print audit plan (tri version)
+#'
+#' @param audit.plan.tri to print.
+#' @param ... No extra options passed.
+#'   
+#' @return print: No return value; prints results.  
+#'   
+#' @rdname audit.plan
+#' 
+#' @export
+print.audit.plan.tri = function( x, ... ) {
+    cat( "Audit plan: beta=", x$beta, "  stages=", x$stages, "  beta1=", x$beta1, 
+         "\n\t\td^+=", x$d.plus, " (vote swing of ", x$swing, ")    p_d=", x$p_d, 
+         "\n\t\tP=", x$P, "  cut=", x$cut, "  T=", x$T, "  1/T=", (1/x$T),
+         "\n\t\tn=", x$n, "  met=", "  PPEB w/ ", x$bound, sep="",
+         "\n\t\tE[# pcts audited]=", round( x$E.p, digits=1), "   E[votes audited]=", round(x$E.vts), "\n" )
+    #			"\n\t\tskipped=", x$skipped, " %mar lost =", (1-x$threshold), "\n" )
+    #	if ( length(x$stratas) > 1 ) {
+    #		print( rbind( x$stratas, x$ns ) )
+    #	}
+}
+
+
+
 

@@ -1,7 +1,7 @@
 Package: elec
 Type: Package
 Title: Collection of Functions for Statistical Election Audits
-Version: 0.1.2.1
+Version: 0.1.2.2
 Date: 2010-06-01
 Author: Luke Miratrix
 Maintainer: Luke Mirarix <luke@vzvz.org>

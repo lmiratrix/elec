@@ -6,15 +6,15 @@
 \title{Santa Cruz Election Data}
 \format{
 A data frame with 16 observations on the following 4 variables.
-\describe{ \item{list("PID")}{Precinct IDs (unique) for all precincts
-involved in race} \item{list("leopold")}{Total number of ballots marked for
-John Leopold.} \item{list("danner")}{Total number of ballots marked for
-Betty Danner.} \item{list("count")}{The number of times precinct was sampled
+\describe{ \item{PID}{Precinct IDs (unique) for all precincts
+involved in race} \item{leopold}{Total number of ballots marked for
+John Leopold.} \item{danner}{Total number of ballots marked for
+Betty Danner.} \item{count}{The number of times precinct was sampled
 in the PPEB sample taken.} }
 }
 \source{
 Santa Cruz County, CA, Clerk Gail Pellerin, and their staffs, which
-we thank for their generous cooperation and the onsiderable time and effort
+we thank for their generous cooperation and the considerable time and effort
 they spent counting ballots by hand in order to collect these data.
 }
 \description{

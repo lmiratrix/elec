@@ -174,6 +174,8 @@ make.opt.packed.bad = function( Z,  max.taint = 1,
 } # end make.opt.packed.bad
 
 
+
+
 # Given the structure of some large election, make a small election by
 # sampling batches (with replacement) from the full list.
 # This first samples N precincts (and gets the totals
@@ -182,7 +184,7 @@ make.opt.packed.bad = function( Z,  max.taint = 1,
 # Note different calls to this will produce different margins based on precincts
 # selected.  
 #
-# WARNING: It is concievable that the winner will flip due to the sampling, if the 
+# WARNING: It is conceivable that the winner will flip due to the sampling, if the 
 #    sample has too many batches for the loser.
 # 
 # Param: Z: The large election, holding precincts with size, votes, etc., that get
@@ -191,6 +193,9 @@ make.opt.packed.bad = function( Z,  max.taint = 1,
 #
 # Return: Data frame with precinct information for the race.  NOTE- The reported vote
 #    totals are just that, reported.
+
+#' @rdname make.audit
+#' @export
 make.audit.from.Z = function( Z, N = 400, ... ) {
 	Z$V = Z$V[ sample(1:nrow(Z$V), N, replace=TRUE), ]
 	Z$audit=NULL
@@ -210,7 +215,7 @@ make.audit.from.Z = function( Z, N = 400, ... ) {
 #    totals are just that, reported.
 
 
-#' make.audit functions
+#' Make a fake audit given specified error for simulations
 #' 
 #' Functions that make fake audits given a specified error mechanism and a
 #' elec.data object holding reported outcomes.
@@ -230,7 +235,6 @@ make.audit.from.Z = function( Z, N = 400, ... ) {
 #' WARNING: It is concievable that the winner will flip due to the sampling, if
 #' the sample has too many batches for the loser.
 #' 
-#' @aliases make.audit make.audit.from.Z
 #' @param Z elec.data object.  For make.audit.from.Z, this is the large
 #' election, holding precincts with size, votes, etc., that get sampled to make
 #' an election of a requested number of batches.
@@ -565,8 +569,11 @@ truth.looker = function( data ) {
 
 
 
-# Some sample size methods for KM method.
-
+#' Pretty print KM audit plan
+#' 
+#' @param x A audit.plan.KM object, such as one returned by KM.calc.sample.
+#' @param ... ignored
+#' @export
 print.audit.plan.KM = function (x, ...) 
 {
   cat(sprintf("Audit plan: beta=%.2f   met=PPEB (KM) w/ %s\n", 
@@ -592,7 +599,6 @@ print.audit.plan.KM = function (x, ...)
 #' audit is planned.
 #' 
 #' 
-#' @aliases KM.calc.sample print.audit.plan.KM
 #' @param Z elec.data object
 #' @param beta Desired level of confidence.  This is 1-risk, where risk is the
 #' maximum chance of not going to a full recount if the results are wrong.
@@ -601,8 +607,7 @@ print.audit.plan.KM = function (x, ...)
 #' @param taint Assumed taint.  Taint is assumed to be the taint for all
 #' batches (very conservative).  If taint=0 then we produce a good baseline.
 #' @param bound Type of bound on the maximum error one could find in a batch.
-#' @param x A audit.plan.KM object, such as one returned by KM.calc.sample.
-#' @param \dots Unused.
+#' 
 #' @return A audit.plan.KM object.
 #' @author Based on the KM audit by Stark.
 #' @seealso KM.audit

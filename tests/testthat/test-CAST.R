@@ -32,3 +32,13 @@ test_that( "sim.race works", {
     
 })
 
+
+
+test_that( "make.truth stuff", {
+    Z = make.sample( M = 0.2, N = 800 )
+    Z
+    Zth <- make.truth.ex.bad(Z)
+    expect_true( !is.null( Zth ) )
+})
+
+

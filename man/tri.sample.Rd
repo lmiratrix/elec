@@ -2,7 +2,6 @@
 % Please edit documentation in R/trinomial.R
 \name{tri.sample}
 \alias{tri.sample}
-\alias{tri.sample.stats}
 \title{Sample from List of Precincts PPEB}
 \usage{
 tri.sample(
@@ -37,13 +36,9 @@ repeatedly sampled precincts seperately.}
 \item{known}{Name of column in Z\$V of TRUE/FALSE, where TRUE are precincts
 that are considered ``known'', and thus should not be sampled for whatever
 reason.}
-
-\item{samp}{A sample, such as one returned from tri.sample}
 }
 \value{
-tri.sample returns a sample of precincts.  tri.sample.stats is a
-utility function returning the total number of unique precincts and ballots
-given a sample.
+a sample of precincts.
 }
 \description{
 tri.sample selects a sample of precincts PPEB.  Namely, samples n times,
@@ -64,7 +59,7 @@ tri.sample( Z, samp, seed=541227 )
 }
 \seealso{
 \code{\link{trinomial.bound}} \code{\link{elec.data}}
-\code{\link{tri.calc.sample}} \code{\link{audit.plan.tri}}
+\code{\link{tri.calc.sample}}
 }
 \author{
 Luke W. Miratrix

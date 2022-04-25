@@ -21,13 +21,6 @@ for some fixed amount of error in conjunction with the err.override.}
 \item{err.override}{Assume a baserate of this amount of error everywhere,
 ignoring audit data. If non-null, use this as the found error in votes
 rather than the actual errors found in the audit.}
-
-\item{bound.col}{This is the vector (in audit) containing the maximum number
-of votes possible in the various precincts.}
-
-\item{calc.e_p}{Calculate e\_p or take as given.}
-
-\item{w_p}{The weight function to use to reweight the errors of precincts.}
 }
 \value{
 compute.audit.errors returns a new audit table from Z with two new

@@ -51,27 +51,6 @@ are already known).  This is a vector of TRUE/FALSE.}
 
 \item{bound.function}{What function should be used to calculate worst-case
 potential error of precincts.}
-
-\item{ns}{EITHER an audit.plan or a vector of sample sizes for the strata.
-Names must correspond ot the names of the strata.  If ns is an audit plan,
-then the strata variable should not be passed as well.}
-
-\item{seed}{Seed to use--for reproducability.}
-
-\item{print.trail}{Print out diagnostics.}
-
-\item{known}{The column of known precincts that should thus not be selected.
-Similar to "drop", above.}
-
-\item{plan}{An audit.plan object that the audit was conducted under.}
-
-\item{audit}{A data.matrix holding the audit data, if the Z object does not
-have one, or if it is desirable to override it.  If both the Z object has an
-audit object and audit is not null, it will use this parameter and ignore
-the one in Z.}
-
-\item{...}{Passed to CAST.calc.sample if plan is null and needs to be
-regenerated.}
 }
 \description{
 Collection of functions for planning and evaluating results of a CAST

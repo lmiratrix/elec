@@ -6,10 +6,10 @@
 \title{Marin Measure B Reported Results}
 \format{
 A data frame with 544 observations on the following 5 variables.
-\describe{ \item{list("PID")}{Batch ID} \item{list("strata")}{There are two
+\describe{ \item{PID}{Batch ID} \item{strata}{There are two
 levels, \code{ST-IB} \code{ST-VBM} for in-precinct and Vote-by-Mail.}
-\item{list("tot.votes")}{total ballots cast in the batch.}
-\item{list("Yes")}{Number recorded for Yes} \item{list("No")}{Number
+\item{tot.votes}{total ballots cast in the batch.}
+\item{Yes}{Number recorded for Yes} \item{No}{Number
 recorded for No} }
 }
 \source{

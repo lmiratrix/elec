@@ -2,7 +2,6 @@
 % Please edit documentation in R/KM_package.R
 \name{KM.calc.sample}
 \alias{KM.calc.sample}
-\alias{print.audit.plan.KM}
 \title{Calculate sample size for KM-audit.}
 \usage{
 KM.calc.sample(Z, beta = 0.75, taint = 0, bound = c("e.plus", "WPM", "passed"))
@@ -19,10 +18,6 @@ denoted $alpha$.}
 batches (very conservative).  If taint=0 then we produce a good baseline.}
 
 \item{bound}{Type of bound on the maximum error one could find in a batch.}
-
-\item{x}{A audit.plan.KM object, such as one returned by KM.calc.sample.}
-
-\item{\dots}{Unused.}
 }
 \value{
 A audit.plan.KM object.

@@ -5,6 +5,7 @@
 \alias{is.audit.plan}
 \alias{print.audit.plan}
 \alias{is.audit.plan.tri}
+\alias{print.audit.plan.tri}
 \title{Audit Plans for CAST and Trinomial Methods}
 \usage{
 is.audit.plan(x)
@@ -12,11 +13,17 @@ is.audit.plan(x)
 \method{print}{audit.plan}(x, ...)
 
 is.audit.plan.tri(x)
+
+\method{print}{audit.plan.tri}(x, ...)
 }
 \arguments{
-\item{x}{An audit plan (or trinomial audit plan).}
+\item{x}{object to check}
 
 \item{...}{No extra options passed.}
+
+\item{audit.plan}{to print.}
+
+\item{audit.plan.tri}{to print.}
 }
 \value{
 is.audit.plan: TRUE if object is an audit.plan object.
@@ -24,6 +31,8 @@ is.audit.plan: TRUE if object is an audit.plan object.
 print: No return value; prints results.
 
 is.audit.plan.tri: TRUE if object is an audit.plan.tri object.
+
+print: No return value; prints results.
 }
 \description{
 An \code{audit.plan} is returned by CAST.calc.sample, containing details of

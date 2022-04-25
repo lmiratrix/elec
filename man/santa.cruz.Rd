@@ -6,11 +6,11 @@
 \title{Santa Cruz Election Data}
 \format{
 A data frame with 152 observations on the following 5 variables.
-\describe{ \item{list("PID")}{Precinct IDs (unique) for all precincts
-involved in race} \item{list("r")}{Total number of registered voters in the
-precinct.} \item{list("tot.votes")}{Total number of ballots cast in the
-precinct.} \item{list("leopold")}{Total number of ballots marked for John
-Leopold.} \item{list("danner")}{Total number of ballots marked for Betty
+\describe{ \item{PID}{Precinct IDs (unique) for all precincts
+involved in race} \item{r}{Total number of registered voters in the
+precinct.} \item{tot.votes}{Total number of ballots cast in the
+precinct.} \item{leopold}{Total number of ballots marked for John
+Leopold.} \item{danner}{Total number of ballots marked for Betty
 Danner.} }
 }
 \source{

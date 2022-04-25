@@ -19,8 +19,8 @@
 #' style there are two main computational tasks provided: estimate the needed
 #' sample size and expected workload, and calculate $P$-values for a given
 #' audit result.  The three methods are CAST (see
-#' \code{\link{CAST.calc.sample}} and \code{\link{CAST}}), the Trinomial Bound
-#' (see \code{\link{tri.calc.sample}} or \code{\link{trinomial.bound}}) , and
+#' \code{\link{CAST.calc.sample}} and \code{\link{CAST.audit}}, the Trinomial Bound
+#' (see \code{\link{tri.calc.sample}} and \code{\link{trinomial.audit}}), and the
 #' Kaplan-Markov (KM) Bound (see \code{\link{KM.calc.sample}} and
 #' \code{\link{KM.audit}}).
 #' 
@@ -103,7 +103,7 @@ NULL
 #' @format A data frame with 544 observations on the following 5 variables.
 #' \describe{ \item{PID}{Batch ID} \item{strata}{There are two
 #' levels, \code{ST-IB} \code{ST-VBM} for in-precinct and Vote-by-Mail.}
-#' \item{list("tot.votes")}{total ballots cast in the batch.}
+#' \item{tot.votes}{total ballots cast in the batch.}
 #' \item{Yes}{Number recorded for Yes} \item{No}{Number
 #' recorded for No} }
 #' @references See J. L. Hall, L. W. Miratrix, P. B. Stark, M. Briones, E.
@@ -166,7 +166,7 @@ NULL
 #' @seealso \link{santa.cruz}. For an illustration of analyzing this data, see
 #' the example in \code{\link{trinomial.bound}}.
 #' @source Santa Cruz County, CA, Clerk Gail Pellerin, and their staffs, which
-#' we thank for their generous cooperation and the onsiderable time and effort
+#' we thank for their generous cooperation and the considerable time and effort
 #' they spent counting ballots by hand in order to collect these data.
 #' @keywords datasets
 #' @examples
@@ -205,7 +205,7 @@ NULL
 #' @format A data frame with 152 observations on the following 5 variables.
 #' \describe{ \item{PID}{Precinct IDs (unique) for all precincts
 #' involved in race} \item{r}{Total number of registered voters in the
-#' precinct.} \item{list("tot.votes")}{Total number of ballots cast in the
+#' precinct.} \item{tot.votes}{Total number of ballots cast in the
 #' precinct.} \item{leopold}{Total number of ballots marked for John
 #' Leopold.} \item{danner}{Total number of ballots marked for Betty
 #' Danner.} }
@@ -254,7 +254,7 @@ NULL
 #' 
 #' # Make an elec.data object out of precicnt-level results
 #' data(yolo)
-#' yolo = make.Z( yolo, C.names=c("y","n","under","over"), tot.votes.col="b" ) 
+#' yolo = elec.data( yolo, C.names=c("y","n","under","over"), tot.votes.col="b" ) 
 #' 
 #' # Look at different sample sizes and cuts for setting aside
 #' # small precincts

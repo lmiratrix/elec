@@ -3,36 +3,12 @@
 
 
 
-## make contour plot of the optimization problem
-## Note: alphas are multiplied by 100 to get in percents.
-## Param     n = sample size
-##           k = # errors of size d
-##           d = mag of error (in percent)
-##           e.max = mag of largest possible error (in percent)
-##           xlim,ylim - area of plot to plot
-
-
 #' Auditing with the Trinomial Bound: trinomial.bound and trinomial.audit
 #' 
-#' \code{trinomial.audit} converts the audited total counts for candidates to
-#' overstatements and taints. \code{trinomial.bound} calculates the trinomial
-#' bound given the size of an audit sample, the number of non-zero errors, and
-#' the size of the small-error threshold. It can also plot a contour of the
-#' distribution space, bounds, and alpha lines.
+#' This method makes a contour plot of the optimization problem.
 #' 
-#' Right now the p-value is computed in a clumsy, bad way.  A grid of points
-#' over (0, xlim) X (0, ylim) is generated corresponding to values of p0 and
-#' pd, and for each point the mean of that distribution and the chance of
-#' generating an outcome as extreme as k is calculated.  Then the set of points
-#' with an outcome close to alpha is extrated, and the corresponding bound is
-#' optimized over this subset.  Not the best way to do things.
+#' Note: alphas are multiplied by 100 to get in percents.
 #' 
-#' @aliases trinomial.bound trinomial.audit
-#' @param Z An elec.data object that is the race being audited.
-#' @param audit A data.frame with a column for each candidate and a row for
-#' each audited precinct, holding the audit totals for each candidate. An
-#' additional column, \code{count}, holds the number of times that precinct was
-#' sampled (since sampling was done by replacement).
 #' @param n Size of the sample (not precincts, but samples which could
 #' potentially be multiple samples of the same precinct).
 #' @param k The number of positive taints found in sample.
@@ -59,41 +35,47 @@
 #' @param grid.resolution How many divisions of the grid should there be?  More
 #' gives greater accuracy in the resulting p-values and bounds.
 #' @param \dots Extra arguments passed to the plot command.
-#' @return List with charactaristics of the audit and the final results.
+#' 
+#' @return List with characteristics of the audit and the final results.
 #' \item{n}{ Size of sample.} \item{k}{Number of non-zero taints.}
 #' \item{d}{Threshold for what a small taint is.} \item{e.max}{The worst-case
 #' taint.} \item{max}{ The upper confidence bound for the passed alpha-level.}
 #' \item{p}{A length three vector.  The distribution (p0, pd, p1) that achieves
 #' the worst case.} \item{p.value}{ The p.value for the test, if a specific
 #' worst-case bound 1/U was passed via p.value.bound.}
-#' @author Luke W. Miratrix
+#' 
 #' @seealso
 #' 
 #' See \code{\link{elec.data}} for information on the object that holds vote
 #' counts.  See \code{\link{tri.sample}} for drawing the actual sample.  See
 #' \code{\link{tri.calc.sample}} for figuring out how many samples to draw.
 #' See \code{\link{tri.audit.sim}} for simulating audits using this method.
-#' See \link{CAST} for an SRS audit method.
+#' See \link{CAST.audit} for an SRS audit method.
 #' @references See Luke W. Miratrix and Philip B. Stark.  (2009) Election
-#' Audits using a Trinomial Bound.  http://www.stat.berkeley.edu/\~stark
+#' Audits using a Trinomial Bound.  https://www.stat.berkeley.edu/~stark/Vote/index.htm
+#' 
 #' @examples
 #' 
 #' 
-#' ## Auditing Santa Cruz
-#' data(santa.cruz.audit)
+#' # The reported poll data: make an elec.data object for processing
 #' data(santa.cruz)
 #' Z = elec.data(santa.cruz, C.names=c("leopold","danner"))
-#' res = trinomial.audit( Z, santa.cruz.audit )
-#' res
+#' Z
+#'
+#' # Make a plan
 #' plan = tri.calc.sample( Z, beta=0.75, guess.N = 10, p_d = 0.05,
 #'                swing=10, power=0.9, bound="e.plus" )
+#'
+#' # Conduct the audit
+#' data(santa.cruz.audit)
+#' res = trinomial.audit( Z, santa.cruz.audit )
+#' res
 #' 
-#' ## Compute the bound.  Everything is scaled by 100 (i.e. to percents) for easier numbers. 
+#' # Compute the bound.  Everything is scaled by 100 (i.e. to percents) for easier numbers. 
 #' trinomial.bound(n=res$n, k = res$k, d=100*plan$d, e.max=100, p.value.bound=100/plan$T,
 #'            xlim=c(0.75,1), ylim=c(0.0,0.25),
 #'            alpha.lvls=c(25), asp=1,
 #'            main="Auditing Santa Cruz with Trinomial Bound" )
-#' 
 #' 
 #' @export trinomial.bound
 trinomial.bound = function( n = 11, k = 2, d=40, e.max=100, 
@@ -404,6 +386,8 @@ tri.audit.sim = function( Z, n, p_d = 0.1,
 ##        precinct was selected).
 
 
+# @aliases tri.sample tri.sample.stats
+
 #' Sample from List of Precincts PPEB
 #' 
 #' tri.sample selects a sample of precincts PPEB.  Namely, samples n times,
@@ -412,7 +396,6 @@ tri.audit.sim = function( Z, n, p_d = 0.1,
 #' 
 #' The weights, if passed, are in the ``e.max'' column of Z\$V.
 #' 
-#' @aliases tri.sample tri.sample.stats
 #' @param Z elec.data object
 #' @param n Either a audit.plan.tri object (that contains n) or an integer
 #' which is the size of the sample
@@ -426,13 +409,10 @@ tri.audit.sim = function( Z, n, p_d = 0.1,
 #' @param known Name of column in Z\$V of TRUE/FALSE, where TRUE are precincts
 #' that are considered ``known'', and thus should not be sampled for whatever
 #' reason.
-#' @param samp A sample, such as one returned from tri.sample
-#' @return tri.sample returns a sample of precincts.  tri.sample.stats is a
-#' utility function returning the total number of unique precincts and ballots
-#' given a sample.
+#' @return a sample of precincts. 
 #' @author Luke W. Miratrix
 #' @seealso \code{\link{trinomial.bound}} \code{\link{elec.data}}
-#' \code{\link{tri.calc.sample}} \code{\link{audit.plan.tri}}
+#' \code{\link{tri.calc.sample}}
 #' @examples
 #' 
 #' data(santa.cruz)
@@ -496,6 +476,15 @@ tri.sample = function( Z, n, seed=NULL,
 }
 
 
+#' Utility function for tri.sample
+#'
+#' A utility function returning the total number of unique precincts
+#' and ballots given a sample.
+#'
+#' @param samp A sample, such as one returned from tri.sample
+#' @return  the total number of unique precincts and ballots given a
+#'   sample.
+#' @export
 tri.sample.stats = function( samp ) {
 	
 	c( sampled = nrow( samp ),
@@ -516,49 +505,55 @@ tri.sample.stats = function( samp ) {
 ## Param: bound -- e.plus, WPM, or use the passed, previously computed, e.max values in the Z object.
 
 
-#' Calculate needed sample size for election auditing using the Trinomial Bound
-#' 
-#' Calculate an estimated sample size to do a trinomial bound that would have a
-#' specified power (the chance to certify assuming a given estimate of
-#' low-error error rate), and a specified maximum risk of erroneously
-#' certifying if the actual election outcome is wrong.
-#' 
-#' 
+#' Calculate needed sample size for election auditing using the
+#' Trinomial Bound
+#'
+#' Calculate an estimated sample size to do a trinomial bound that
+#' would have a specified power (the chance to certify assuming a
+#' given estimate of low-error error rate), and a specified maximum
+#' risk of erroneously certifying if the actual election outcome is
+#' wrong.
+#'
+#'
 #' @param Z elec.data object
-#' @param beta 1-beta is the acceptable risk of failing to notice that a full
-#' manual count is needed given an election with an actual outcome different
-#' from the semi-official outcome.
+#' @param beta 1-beta is the acceptable risk of failing to notice that
+#'   a full manual count is needed given an election with an actual
+#'   outcome different from the semi-official outcome.
 #' @param guess.N The guessed needed sample size.
-#' @param p_d For the alternate: estimate of the proportion of precincts that
-#' have error.
-#' @param swing For the alternate: estimate of the max size of an error in
-#' votes, given that error exists.
-#' @param power The desired power of the test against the specified alternate
-#' defined by p\_d and swing.
-#' @param bound e.plus, WPM, or use the passed, previously computed, e.max
-#' values in the Z object.
-#' @return An \code{audit.plan.tri} object.  This is an object that holds
-#' information on how many samples are needed in the audit, the maximum amount
-#' of potential overstatement in the election, and a few other things.
-#' @author Luke W. Miratrix
+#' @param p_d For the alternate: estimate of the proportion of
+#'   precincts that have error.
+#' @param swing For the alternate: estimate of the max size of an
+#'   error in votes, given that error exists.
+#' @param power The desired power of the test against the specified
+#'   alternate defined by p\_d and swing.
+#' @param bound e.plus, WPM, or use the passed, previously computed,
+#'   e.max values in the Z object.
+#' @return An \code{audit.plan.tri} object.  This is an object that
+#'   holds information on how many samples are needed in the audit,
+#'   the maximum amount of potential overstatement in the election,
+#'   and a few other things.
+#'   
 #' @seealso
-#' 
-#' See \code{\link{elec.data}} for information on the object that holds vote
-#' counts.  See \code{\link{tri.sample}} for drawing the actual sample.  See
-#' \code{\link{audit.plan.tri}} for theo object that holds the audit plan
-#' information (e.g., number of draws, estimated work in ballots to audit,
-#' etc.).  See \code{\link{trinomial.bound}} for analyzing the data once the
-#' audit results are in.  See \code{\link{tri.audit.sim}} for simulating audits
-#' using this method.  See \link{CAST} for an SRS audit method.
-#' @references See Luke W. Miratrix and Philip B. Stark.  (2009) Election
-#' Audits using a Trinomial Bound.  http://www.stat.berkeley.edu/~stark
+#'
+#' See \code{\link{elec.data}} for information on the object that
+#' holds vote counts.  See \code{\link{tri.sample}} for drawing the
+#' actual sample.  The \code{audit.plan.tri} object holds the audit
+#' plan information (e.g., number of draws, estimated work in ballots
+#' to audit, etc.).  See \code{\link{trinomial.bound}} for analyzing
+#' the data once the audit results are in.  See
+#' \code{\link{tri.audit.sim}} for simulating audits using this
+#' method.  See \link{CAST.audit} for an SRS audit method.
+#'
+#' @references See Luke W. Miratrix and Philip B. Stark.  (2009)
+#'   Election Audits using a Trinomial Bound.
+#'   http://www.stat.berkeley.edu/~stark
 #' @examples
-#' 
+#'
 #' data(santa.cruz)
 #' Z = elec.data( santa.cruz, C.names=c("danner","leopold") )
 #' tri.calc.sample( Z, beta=0.75, guess.N = 10, p_d = 0.05,
 #'                swing=10, power=0.9, bound="e.plus" )
-#' 
+#'
 #' @export tri.calc.sample
 tri.calc.sample = function( Z, beta=0.75, guess.N = 20, p_d = 0.1, swing = 5, 
 							power=0.90,
@@ -615,21 +610,28 @@ tri.calc.sample = function( Z, beta=0.75, guess.N = 20, p_d = 0.1, swing = 5,
 
 
 
-print.audit.plan.tri = function( x, ... ) {
-	cat( "Audit plan: beta=", x$beta, "  stages=", x$stages, "  beta1=", x$beta1, 
-			"\n\t\td^+=", x$d.plus, " (vote swing of ", x$swing, ")    p_d=", x$p_d, 
-			"\n\t\tP=", x$P, "  cut=", x$cut, "  T=", x$T, "  1/T=", (1/x$T),
-			"\n\t\tn=", x$n, "  met=", "  PPEB w/ ", x$bound, sep="",
-			"\n\t\tE[# pcts audited]=", round( x$E.p, digits=1), "   E[votes audited]=", round(x$E.vts), "\n" )
-#			"\n\t\tskipped=", x$skipped, " %mar lost =", (1-x$threshold), "\n" )
-#	if ( length(x$stratas) > 1 ) {
-#		print( rbind( x$stratas, x$ns ) )
-#	}
-}
 
-
-
-# return the errors of a trinomial audit
+#' Conduct trinomial audit
+#' 
+#' \code{trinomial.audit} converts the audited total counts for candidates to
+#' overstatements and taints. \code{trinomial.bound} calculates the trinomial
+#' bound given the size of an audit sample, the number of non-zero errors, and
+#' the size of the small-error threshold. It can also plot a contour of the
+#' distribution space, bounds, and alpha lines.
+#' 
+#' Right now the p-value is computed in a clumsy, bad way.  A grid of points
+#' over (0, xlim) X (0, ylim) is generated corresponding to values of p0 and
+#' pd, and for each point the mean of that distribution and the chance of
+#' generating an outcome as extreme as k is calculated.  Then the set of points
+#' with an outcome close to alpha is extrated, and the corresponding bound is
+#' optimized over this subset.  Not the best way to do things.
+#'
+#' @param Z An elec.data object that is the race being audited.
+#' @param audit A data.frame with a column for each candidate and a row for
+#' each audited precinct, holding the audit totals for each candidate. An
+#' additional column, \code{count}, holds the number of times that precinct was
+#' sampled (since sampling was done by replacement).
+#' @export
 trinomial.audit = function( Z, audit ) {
 
 	audit$e.max = maximumMarginBound( Z, audit )

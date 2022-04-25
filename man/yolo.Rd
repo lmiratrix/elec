@@ -6,13 +6,13 @@
 \title{Yolo County, CA Election Data}
 \format{
 A data frame with 114 observations on the following 8 variables.
-\describe{ \item{list("PID")}{ Unique identifier for the batches of ballots}
-\item{list("Pct")}{The precinct id of the batch} \item{list("how")}{Vote by
-mail (VBM) or walk-in (PCT)} \item{list("b")}{Number of votes cast in that
-unit} \item{list("under")}{Number of undervotes (ballots not voted).}
-\item{list("over")}{Number of overvotes (where someone marked both yes and
-no).} \item{list("y")}{Reported number of valid ballots marked yes.}
-\item{list("n")}{Reported number of valid ballots marked no.} }
+\describe{ \item{PID}{ Unique identifier for the batches of ballots}
+\item{Pct}{The precinct id of the batch} \item{how}{Vote by
+mail (VBM) or walk-in (PCT)} \item{b}{Number of votes cast in that
+unit} \item{under}{Number of undervotes (ballots not voted).}
+\item{over}{Number of overvotes (where someone marked both yes and
+no).} \item{y}{Reported number of valid ballots marked yes.}
+\item{n}{Reported number of valid ballots marked no.} }
 }
 \source{
 Yolo County, CA.  Special thanks to Freddie Oakley and Tom
@@ -31,7 +31,7 @@ overreported the "yes" votes by 1.  There were no other errors.
 
 # Make an elec.data object out of precicnt-level results
 data(yolo)
-yolo = make.Z( yolo, C.names=c("y","n","under","over"), tot.votes.col="b" ) 
+yolo = elec.data( yolo, C.names=c("y","n","under","over"), tot.votes.col="b" ) 
 
 # Look at different sample sizes and cuts for setting aside
 # small precincts

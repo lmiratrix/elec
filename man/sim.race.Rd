@@ -50,7 +50,7 @@ See http://www.stat.berkeley.edu/~stark/Vote/index.htm for
 relevant information.
 }
 \seealso{
-See \code{\link{CAST}} and \code{\link{CAST.calc.opt.cut}} for
+See \code{\link{CAST.audit}} and \code{\link{CAST.calc.opt.cut}} for
 methods regarding CAST audits. Also see \code{\link{do.audit}},
 \code{\link{make.sample}}, and \code{\link{make.truth}} for doing other
 simulation studies of this method.

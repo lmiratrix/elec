@@ -14,11 +14,22 @@ compute.audit.errors(
 )
 }
 \arguments{
-\item{bound.col}{This is the vector (in audit) containing the
-maximum number of votes (or error) possible in the various
+\item{Z}{Elec.data object holding the originally reported results}
+
+\item{audit}{A data.frame with one column per candidate that holds
+the totals from the audit.  Each row corresponds to a precinct.
+Object needs a PID column with precinct ids that match the ones
+in Z.}
+
+\item{calc.e_p}{Calculate e\_p or take as given.}
+
+\item{w_p}{The weight function to use to reweight the errors of
 precincts.}
 
-\item{err.override:}{If non-null, use this as the found error in
+\item{bound.col}{This is the vector (in audit) containing the
+maximum number of votes possible in the various precincts.}
+
+\item{err.override}{If non-null, use this as the found error in
 votes rather than the actual errors found in the audit.}
 }
 \value{
