@@ -1,6 +1,3 @@
-
-
-
 ## This is to run simulations on the Kaplan-Markov methods
 ## April-May, 2009
 
@@ -17,6 +14,28 @@
 #              If false, the error is +/-swing
 #
 # Return: elec.data object holding the 'truth'.
+
+
+#' making fake truth for electios
+#' 
+#' Make a random truth that is with the reported outcome, but has random error
+#' scattered throughout.
+#' 
+#' Given reported results (Z), make a new data.frame which is the truth (that
+#' can be 'audited' by looking at relevant precincts).
+#' 
+#' This is the generic small error generation used in trinomial paper and
+#' elsewhere as a baseline "normal" mode of operations.
+#' 
+#' @param Z elec.data object.  The original reported results.
+#' @param p_d chance a batch has error
+#' @param swing max amount of error in votes.
+#' @param uniform if yes, then error is from 1 to swing.  If no, then error is
+#' swing.
+#' @param seed random seed to ease replication
+#' @param PID which column has batch IDs.
+#' @return # Return: elec.data object holding the 'truth'.
+#' @export make.random.truth
 make.random.truth = function( Z, 
 						p_d = 0.1, 
 						swing = 10, 
@@ -60,6 +79,30 @@ make.random.truth = function( Z,
 ## Param: max.taint - maximum amount of taint in a given precinct
 ##
 ## Return the vote matrix (a data.frame) with tot.votes, e.max, and taint computed (NOT the elec data object).
+
+
+#' make.truth.opt.bad
+#' 
+#' Generate a ``truth'' that is optimally bad in the sense of the margin in
+#' error is packed into as few precints as possible.
+#' 
+#' Make an audit data.frame with the error being exactly 1 margin, and packed
+#' into a small number of precincts (with some potential for binding amount of
+#' error per precinct).
+#' 
+#' Warning: error is not necessarily achievable as the discrete nature of whole
+#' votes is disregarded.
+#' 
+#' @param Z elec.data object to make bad truth for.
+#' @param max.taint max taint for any batch
+#' @param max.taint.good max taint in good direction for any batch
+#' @param WPM Use WPM bound on error.
+#' @param add.good add this amount of margin in good error (i.e. for the
+#' winner)
+#' @param add.random add a random tweak to error
+#' @return Return the vote matrix (a data.frame) with tot.votes, e.max, and
+#' taint computed (NOT the elec data object).
+#' @export make.opt.packed.bad
 make.opt.packed.bad = function( Z,  max.taint = 1, 
 						max.taint.good=max.taint, 
 						WPM = FALSE, add.good = 0, add.random=FALSE ) {
@@ -165,6 +208,49 @@ make.audit.from.Z = function( Z, N = 400, ... ) {
 #               The other methods generate the truth according to various metrics.
 # Return: Data frame with precinct information for the race.  NOTE- The reported vote
 #    totals are just that, reported.
+
+
+#' make.audit functions
+#' 
+#' Functions that make fake audits given a specified error mechanism and a
+#' elec.data object holding reported outcomes.
+#' 
+#' 
+#' make.audit is to make the election results that can be sampled from with the
+#' simulator.  This method generates the true taint and sampling weights of all
+#' precincts in the race.  The taint is in column 'taint', sampling weights in
+#' 'e.max'
+#' 
+#' make.audit.from.Z Given the structure of some large election, make a small
+#' election by sampling batches (with replacement) from the full list.  This
+#' first samples N precincts (and gets the totals from them) and then builds
+#' the 'truth' as normal using the make.audit() method.  Note different calls
+#' to this will produce different margins based on precincts selected.
+#' 
+#' WARNING: It is concievable that the winner will flip due to the sampling, if
+#' the sample has too many batches for the loser.
+#' 
+#' @aliases make.audit make.audit.from.Z
+#' @param Z elec.data object.  For make.audit.from.Z, this is the large
+#' election, holding precincts with size, votes, etc., that get sampled to make
+#' an election of a requested number of batches.
+#' @param method the method of error generation.  if "tweak" (the default),
+#' then add random amounts of swing to some precincts, and call that the
+#' "truth".  The other methods generate the truth according to various metrics.
+#' @param p_d percent chance of error in precinct (for ok method)
+#' @param swing vote swing if batch has error (for ok method)
+#' @param max.taint maximum taint allowed in batch
+#' @param print.race print info on race to command line?
+#' @param N The desired size of the new election.
+#' 
+#' @param \dots other arguments to the method functions
+#' @return
+#' 
+#' Data frame with precinct information for the race.  NOTE- The reported vote
+#' totals are just that, reported.
+#' @author Miratrix
+#' @seealso \link{truth.looker}
+#' @export make.audit
 make.audit = function( Z = NULL, 
 					method = c( "tweak", "opt.bad", "opt.bad.WPM", "opt.bad.packed", "opt.bad.packed.WPM", "ok", "no error" ),
 					p_d = 0.20, swing=20, max.taint=1, print.race=FALSE, ... ) {
@@ -229,6 +315,28 @@ make.audit = function( Z = NULL,
 #
 # Return: stopPt - number of draws drawn
 #         n - number of unique precincts audited
+
+
+#' simulate KM audits
+#' 
+#' This takes an election and a truth and conducts a KM audit.
+#' 
+#' 
+#' Given a list of all precincts and their true taints and their sampling
+#' weights (in data, a data.frame), do a sequential audit at the specified
+#' alpha.
+#' 
+#' @param data a data frame, one row per patch, with: tot.votes, e.max, taint
+#' @param M the maximum number of samples to draw before automatically
+#' escalating to a full recount.
+#' @param alpha level of risk.
+#' @param plot plot a chart?
+#' @param debug debug diag printed?
+#' @param return.Ps Return the sequence of p-values all the way up to N.
+#' @param truncate.Ps Return Ps only up to where audit stopped.
+#' @return stopPt - number of draws drawn n - number of unique precincts
+#' audited
+#' @export simulateIt
 simulateIt = function( data, M = 50, alpha = 0.25, 
 					   plot = FALSE,
 					   debug=FALSE, return.Ps=FALSE, truncate.Ps=TRUE ) {
@@ -306,12 +414,52 @@ simulateIt = function( data, M = 50, alpha = 0.25,
 ####################################################################################
 
 
+
+
+#' KM Audit Sample Size Calc
+#' 
+#' Calc KM Optimal Sample Size
+#' 
+#' This is how many steps would be needed if no error was found with each step.
+#' Obviously a bit idealistic, but still useful.
+#' 
+#' @param Z elec.data object
+#' @param beta risk
+#' @return Single number of batches to sample.
+#' @export opt.sample.size
 opt.sample.size = function( Z, beta=0.25 ) {
 	U = sum( Z$V$e.max )
 	ceiling( log( beta ) / log( 1 - 1/U ) )
 }
 
 # Order of audited precincts is assumed to be as given.
+
+
+#' KM Audit Calculator
+#' 
+#' Do a KM audit given a specified list of audited batches for a specified
+#' election.
+#' 
+#' This will do a single-stage KM audit as a consequence of doing the stepwise
+#' version (since the single-stage is the same as the stepwise up to the number
+#' of batches audited).
+#' 
+#' WARNING: This function is not fully debugged!
+#' 
+#' @param data Data frame holding audit data with taint and tot.votes as two
+#' columns.
+#' @param U Maximum total error bound (sum of e.max for all batches in race).
+#' @param Z elec.data object for the race---the original reported results.
+#' @param alpha Risk.
+#' @param plot Plot the audit?
+#' @param debug Print debugging info
+#' @param return.Ps Return the stepwise P-values
+#' @param truncate.Ps Return the stepwise P-values only up to the audit stop
+#' point.
+#' @return List of various things, including final p-value.
+#' @author Miratrix
+#' @references Stark, Miratrix
+#' @export KM.audit
 KM.audit = function( data, U, Z, alpha = 0.25, 
 					   plot = FALSE,
 					   debug=FALSE, return.Ps=FALSE, truncate.Ps=TRUE ) {
@@ -383,6 +531,20 @@ KM.audit = function( data, U, Z, alpha = 0.25,
 
 
 
+
+
+#' Looking at fake ``truths'' for election simulations
+#' 
+#' This prints out total error in a fake truth for an election, and some other
+#' info.
+#' 
+#' Utility function for debugging and understanding stuff.
+#' 
+#' Look at a specific "truth" and print out what total error, etc.  is.
+#' 
+#' @param data The data.frame returned from such things as make.audit
+#' @return None.  Just does printout.
+#' @export truth.looker
 truth.looker = function( data ) {
 	cat( "* Summary Statistics for True Error *\nBatches with taint:\n" )
 	a = data[ data$taint != 0, ]
@@ -422,6 +584,35 @@ print.audit.plan.KM = function (x, ...)
 
 # Taint is assumed to be the taint for _all_ batches (very conservative).
 # If taint=0 then we have a good baseline.
+
+
+#' Calculate sample size for KM-audit.
+#' 
+#' Calculate the size of a sample needed to certify a correct election if a KM
+#' audit is planned.
+#' 
+#' 
+#' @aliases KM.calc.sample print.audit.plan.KM
+#' @param Z elec.data object
+#' @param beta Desired level of confidence.  This is 1-risk, where risk is the
+#' maximum chance of not going to a full recount if the results are wrong.
+#' Note that in Stark's papers, the value of interest is typically risk,
+#' denoted $alpha$.
+#' @param taint Assumed taint.  Taint is assumed to be the taint for all
+#' batches (very conservative).  If taint=0 then we produce a good baseline.
+#' @param bound Type of bound on the maximum error one could find in a batch.
+#' @param x A audit.plan.KM object, such as one returned by KM.calc.sample.
+#' @param \dots Unused.
+#' @return A audit.plan.KM object.
+#' @author Based on the KM audit by Stark.
+#' @seealso KM.audit
+#' @examples
+#' 
+#'   data(santa.cruz)
+#'   Z = elec.data( santa.cruz, C.names=c("danner","leopold") )
+#'   KM.calc.sample( Z, beta=0.75, taint=0 )
+#' 
+#' @export KM.calc.sample
 KM.calc.sample = function( Z, beta=0.75, taint=0,
 					bound = c("e.plus", "WPM", "passed"))
 {
